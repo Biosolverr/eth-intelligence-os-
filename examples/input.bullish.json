@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "asset": "ETH",
+    "date_utc": "2026-05-16T00:00:00Z",
+    "horizon_days": 30,
+    "history_dir": "./data/history/"
+  },
+  "price": {
+    "current": 1676.2,
+    "ret_24h": 3.5,
+    "ret_7d": 4.0,
+    "ret_30d": 6.0,
+    "s1": 1640,
+    "s2": 1600,
+    "r1": 1710,
+    "r2": 1750,
+    "rsi_1d": 49.8,
+    "rsi_4h": 52.0,
+    "atr_pct": 3.9,
+    "vol_regime": "normal",
+    "macd_status": "bullish_cross",
+    "ma_alignment": "bullish"
+  },
+  "deriv": {
+    "oi_usd_m": 37370,
+    "oi_d1_pct": 1.5,
+    "oi_w_pct": 4.0,
+    "funding_8h": 0.0088,
+    "liq_24h_usd_m": 56.4,
+    "liq_side": "shorts"
+  },
+  "flow": {
+    "etf_7d_usd_m": 67.0,
+    "cet_supply_m_eth": 12.5,
+    "cet_delta_7d_pct": -2.1,
+    "stable_flow": "in",
+    "stable_amount_usd_m": 1160,
+    "sopr": 1.02,
+    "lth_delta_pct": 2.5,
+    "l2_tvl_30d_pct": 8.0
+  },
+  "macro": {
+    "hy_oas_bps": 330,
+    "dxy_weekly_pct": -0.6,
+    "yield_curve_bps": 60,
+    "fed_status": "easing",
+    "spx_drawdown_pct": -0.5,
+    "equity_breadth_pct": 62.0,
+    "btc_corr_30d": 0.65,
+    "fear_greed": 68
+  },
+  "recession": {
+    "g1_usdjpy": 148.0,
+    "g1_jgb10y": 0.85,
+    "g2_pe_nasdaq": 28.0,
+    "g2_top5_conc": 34.0,
+    "g3_hy_default": 3.8,
+    "g3_ig_refi": 4.5,
+    "g3_hy_refi": 9.2,
+    "g4_trade_yoy": -1.5,
+    "g5_us_ur": 4.3,
+    "g5_retail_mom": -0.8,
+    "g6_debt_gdp": 335,
+    "g6_em_defaults": 2,
+    "g7_brent": 82.0,
+    "g7_gpr": 45,
+    "g8_cre_vacancy": 16.0,
+    "g8_housing_yoy": -4.0,
+    "g8_banks_ytd": -8.0
+  },
+  "corridor": {
+    "active": true,
+    "cs": 1640,
+    "cr": 1710,
+    "cm": 1675,
+    "cwidth_pct": 3.4,
+    "touch_s": 4,
+    "touch_r": 3,
+    "false_breaks": 1,
+    "vol_at_s_pct": 45,
+    "vol_at_r_pct": 30,
+    "vol_at_mid_pct": 25,
+    "flags": []
+  }
+}
