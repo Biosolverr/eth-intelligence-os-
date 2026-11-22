@@ -1,0 +1,16 @@
+# local deterministic diagnostics + UI
+streamlit>=1.32.0
+pydantic>=2.7.0
+numpy>=1.26.0
+# GenLayer client / tooling (versions verified in this build: genlayer-py 0.16.3, genlayer-test 0.29.2, genvm-linter 0.11.1rc2)
+genlayer-py>=0.16
+genlayer-test>=0.29
+genvm-linter
+# optional / legacy data layer
+scipy>=1.12.0
+pandas>=2.2.0
+aiohttp>=3.9.0
+aiosqlite>=0.20.0
+redis>=5.0.0
+python-dotenv>=1.0.0
+structlog>=24.4.0
