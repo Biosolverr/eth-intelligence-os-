@@ -94,9 +94,11 @@ Not run on the final deployment:
 | ACC2 (analyst) | `0x4E23B18f0ac1C47F06DB7f99Aed9783e31B29e3C` |
 | ACC3 (stranger) | `0x662aA10611Ef5F8D874B9A3d54446d5e41D1d367` |
 
-Ledger deployed with price source `https://data-api.binance.vision/api/v3/klines?symbol=ETHUSDT&interval=1h&startTime={start_ms}&limit=1`
-and bands 300 / 300. Blocks 1-5 were run again from the start on these addresses after earlier rehearsal deployments
-(see `docs/archive/REHEARSAL_DEPLOYMENTS.md`); nothing here relies on those.
+Main ledger policy as read from `get_policy()`: `price_url_template` `https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1h&startTime={start_ms}&limit=1`,
+`flat_band_bps` 600, `max_price_deviation_bps` 600, `resolve_buffer_s` 7200, owner ACC1, `verdict_contract` = the verdict above,
+`subscribers` 1. The helper ledger L2 of block 9 was deployed with `data-api.binance.vision` and bands 300/300. Blocks 1-5 were run
+again from the start on these addresses after earlier rehearsal deployments (see `docs/archive/REHEARSAL_DEPLOYMENTS.md`);
+nothing here relies on those.
 
 Snapshot ids as recorded by the operator, with the block they were made in (the operator gave no block for the last two):
 
@@ -163,8 +165,8 @@ price near the real market (`examples/input.bullish.json`, `examples/input.beari
 | 9 (block 8, bearish round) | `e28c3ff28c29dac5fd4ed89f84980f292328332d770c4b624c79147de2d071b8` | `bearish`, 65, `elevated` | 167620000000 | `DELIVERED` | 1795892400 | 1797097712 |
 
 Bounties 8 and 9 share the candles: reference = open of 2026-11-21 17:00 UTC (`ref_ms` 1795280400000), end = open of
-2026-11-28 17:00 UTC (`target_ms` 1795885200000), flat band 3 %. Expected in block 11 if the evidence check passes: price up
-by at least 3 %: bounty 8 `hit` (analyst 4 GEN), bounty 9 `miss` (client 4 GEN); down by at least 3 %: the reverse; inside the
+2026-11-28 17:00 UTC (`target_ms` 1795885200000), flat band 6 % on the main ledger (600 bps). Expected in block 11 if the evidence check passes: price up
+by at least 6 %: bounty 8 `hit` (analyst 4 GEN), bounty 9 `miss` (client 4 GEN); down by at least 6 %: the reverse; inside the
 band: both `miss` (a directional stance against a flat market), client 4 GEN each. Bounties 0 and 7 are expected `excluded`
 (client 4 GEN): the asserted price 2995.4 is far from the real market.
 
@@ -195,8 +197,8 @@ low 178711000000 (e8); reference open 180010000000; end open 182348000000; retur
 | 11.1 `expire` without delivery | block-7 bounty 1 with the foreign-horizon verdict (never delivered) | its `deliver_deadline_s` 1795014853 + 259200 s = 1795274053 (2026-11-21 15:14 UTC) | `EXPIRED_NO_DELIVERY`; ACC1 `claimable` +2 GEN (reward); ACC2 none; `forfeited_total` +2 GEN; `ok` true | **PASS** (recorded). Before: `COMMITTED`, analyst ACC2, bond 2 GEN; `get_claimable` ACC1 and ACC2 = 0; `get_solvency`: balance = `locked_total` = 20.002 GEN, `claimable_total` 0, `forfeited_total` 0. `expire` by ACC3: `SUCCESS`, `settled_at_s` 1795280470 (2026-11-21 17:01 UTC), `EXPIRED_NO_DELIVERY`. After: `get_claimable` ACC1 = 2 GEN, ACC2 = 0; `get_solvency`: balance 20.002 GEN, `locked_total` 16.002 GEN (-4), `claimable_total` 2 GEN, `forfeited_total` 2 GEN, `unaccounted` 0, `ok` true. ACC1 `withdraw`: `SUCCESS` (reported; the solvency after the withdrawal was not captured) |
 | 11.2a `resolve` bounty 0 | snapshot `bac05937...` | 2026-11-25 17:00 UTC | `excluded` (asserted 2995.4); `SETTLED`; ACC1 `claimable` +4 GEN | B11_2A_PENDING |
 | 11.2b `resolve` bounty 7 | snapshot `69df13fa...` | 2026-11-28 19:00 UTC | `excluded`; `SETTLED`; ACC1 +4 GEN | B11_2B_PENDING |
-| 11.2c `resolve` bounty 8 (bullish) | snapshot `4a726d2c...` | 2026-11-28 19:00 UTC | `hit` and ACC2 +4 GEN if the price rose 3 % or more, else `miss` and ACC1 +4 GEN | B11_2C_PENDING |
-| 11.2d `resolve` bounty 9 (bearish) | snapshot `e28c3ff2...` | 2026-11-28 19:00 UTC | `hit` and ACC2 +4 GEN if the price fell 3 % or more, else `miss` and ACC1 +4 GEN | B11_2D_PENDING |
+| 11.2c `resolve` bounty 8 (bullish) | snapshot `4a726d2c...` | 2026-11-28 19:00 UTC | `hit` and ACC2 +4 GEN if the price rose 6 % or more, else `miss` and ACC1 +4 GEN | B11_2C_PENDING |
+| 11.2d `resolve` bounty 9 (bearish) | snapshot `e28c3ff2...` | 2026-11-28 19:00 UTC | `hit` and ACC2 +4 GEN if the price fell 6 % or more, else `miss` and ACC1 +4 GEN | B11_2D_PENDING |
 
 Note on the totals: `get_solvency` holds 20.002 GEN, 0.002 GEN more than the four 4-GEN bounties of the runbook and the open ones of blocks 7 and 8; the difference is most likely the small bounty left by gltest G7 (delivered, not yet resolved). `unaccounted` is 0, so nothing is lost.
 
@@ -213,3 +215,6 @@ after `withdraw`, and the final `get_solvency()`. `resolve` must be sent before 
 | 3 | In 4.2 the refusal text for `analyze_layer(quant)` on a frozen snapshot depends on the order: after `release_snapshot` the contract answers `snapshot is not in SUBMITTED state` instead of `layer quant is in arith mode`. | Documented in the guide (4.2). Both refusals are correct. |
 | 4 | The Studio contract list shows several deployments with identical-looking `get_policy()` output; one session mixed up two deployments. | Fingerprint check added to the guide (3.0); the final run was repeated from block 1 on one deployment. |
 | 5 | Studio logs of one transaction were no longer available when the results were collected (6.4 late `expire`). | The final state read through `get_bounty` is recorded above. |
+| 6 | The main ledger was deployed with `api.binance.com` and 600/600, not with the host and bands the guide recommends (`data-api.binance.vision`, 300/300). `api.binance.com` answered `HTTP status 451` to the hosted-Studio validators in an earlier run, and the template cannot be changed after deployment. Block 9 therefore proves live resolution on a helper ledger only. | Accepted by the operator, no redeployment. Block 11.2 shows whether the main ledger resolves; an HTTP 451 there is a known finding (`TEST_REGISTER.md`, U4b), not a contract defect. |
+[TEST_RESULTS.md](https://github.com/user-attachments/files/35237590/TEST_RESULTS.md)
+
