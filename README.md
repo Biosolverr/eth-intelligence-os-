@@ -4,7 +4,7 @@
 No external LLM, no local consensus, no fallback verdict.
 
 > **Status (checked 2026-11-20).** Direct-mode and client tests: **523 passed** (463 contract tests + 60 client/UI tests on a fake RPC); `genvm-lint` passes on all three contracts; mutation checks: **139 contract mutants** (68 verdict, 35 ledger, 36 bounty) and **11 client/UI mutants**, all killed, none survived. Direct mode is CPython with a mocked LLM and web: it is not validator consensus.
-> **Live on the hosted Studio (`studionet`), final deployment (table below):** gltest G1, G2, G4, G5, G6, G9 and G7 **passed** on these exact contracts (7 of 7). The manual runbook (`docs/TESTING_GUIDE.md`, section 3) was run on them: blocks 1-10 matched every expected result, including a verdict delivered through the real chain (verdict -> ledger -> bounty, `emit(on='finalized')`), refused payable calls returning their value, and resolution on real Binance candles through `data-api.binance.vision` (the default `api.binance.com` answers `HTTP status 451` to the hosted-Studio validators, so deploy the ledger with `data-api.binance.vision`). G3 (pause) and G8 (live resolve) passed earlier on freshly deployed stacks and are mirrored by runbook 3.3 and block 9.
+> **Live on the hosted Studio (`studionet`), final deployment (table below):** gltest G1, G2, G4, G5, G6, G9 and G7 **passed** on these exact contracts (7 of 7). The manual runbook (`docs/TESTING_GUIDE.md`, section 3) was run on them: blocks 1-10 matched every expected result, including a verdict delivered through the real chain (verdict -> ledger -> bounty, `emit(on='finalized')`), refused payable calls returning their value, and resolution on real Binance candles through `data-api.binance.vision` on a helper ledger (block 9; the default `api.binance.com` answered `HTTP status 451` to the hosted-Studio validators in an earlier run, so a new deployment should use `data-api.binance.vision`). **The main ledger of the final deployment was deployed with `api.binance.com` and bands 600/600, so whether it can resolve is decided by block 11.** G3 (pause) and G8 (live resolve) passed earlier on freshly deployed stacks and are mirrored by runbook 3.3 and block 9.
 > **Still open (time-gated by contract rules):** the second half of runbook block 11, resolution of the delivered 7-day verdicts and the payout (a bullish and a bearish bounty were delivered in block 8 for it; the `expire` with a forfeited bond, 11.1, passed on the final deployment). <!-- BLOCK11-PENDING: replace this paragraph with the block 11 results; remove "Still open" if everything passed -->
 > Also unverified live: fees, the Streamlit client against a live chain, tolerance calibration with many real validator runs. Details: `docs/TEST_RESULTS.md`, `docs/TEST_REGISTER.md`.
 
@@ -12,7 +12,7 @@ No external LLM, no local consensus, no fallback verdict.
 | Contract | Address |
 |---|---|
 | verdict `contracts/eth_intelligence.py` | `0x75959426F363B8d7363EF7671e2c30B146be2E72` |
-| ledger `contracts/eth_outcome_ledger.py` (price source `data-api.binance.vision`, bands 300/300) | `0xaDA9c28722974830078AFbFD912AEF48143f1d92` |
+| ledger `contracts/eth_outcome_ledger.py` (price source `api.binance.com`, flat band and max price deviation 600/600 bps) | `0xaDA9c28722974830078AFbFD912AEF48143f1d92` |
 | bounty `contracts/eth_analyst_bounty.py` | `0xeFDC090Bd6Ec93d606A81f7012555732e2c7d1eF` |
 
 ## What it does
@@ -50,3 +50,4 @@ model-written layer notes still feed the final prompt - one flat band for all ho
 
 ## Not done / planned
 genlayer-js browser frontend - tolerance calibration with real validator LLMs - fee handling in the Python client - a keeper that calls `resolve` - on-chain port of `engine/` - validator-fetched input evidence - isolation of appeals (factory) - contract upgrade path.
+[README.md](https://github.com/user-attachments/files/35237543/README.md)
